@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import os
-cap = cv2.VideoCapture('cv/video/project_video.mp4')
+cap = cv2.VideoCapture('resource/project_video.mp4')
 
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH) 
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)

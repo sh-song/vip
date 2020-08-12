@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-sample = cv2.imread('/Users/uchu/Works/vip/cv/insung.jpeg')
+sample = cv2.imread('resource/insung.jpeg')
 sample_original = sample.copy() # 이미지를 그대로 복사하는 파이썬 내장 함수인듯.
 
 gray = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
@@ -25,6 +25,4 @@ for i in range(len(lines)):
 res = np.hstack((sample_original, sample))
 cv2.imshow('sample', res)
 
-cv2.waitKey(0)
-cv2.waitKey(0)
 cv2.waitKey(0)

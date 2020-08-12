@@ -1,7 +1,7 @@
 # 사진에 동그라미 그리고 1/4로 잘라서 검게 채우기
 
 import cv2
-sample = cv2.imread('cv/dang.png') # relative path
+sample = cv2.imread('resource/dang.png') # relative path
 height, width, rgb = sample.shape
 print(height, width, rgb)
 #544 776 3
