@@ -1,0 +1,1 @@
+/Users/uchu/Works/vip/cv/insung.jpeg
