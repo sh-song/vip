@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*- 
 # Threshhold에 따른 Canny 변환 정도의 차이
-
 import cv2
-sample = cv2.imread('/Users/uchu/Works/cv/insung.jpeg') #Local 절대경로
+sample = cv2.imread('/Users/uchu/Works/vip/cv/insung.jpeg') #Local 절대경로
 
 
 # Threshold가 낮아지냐 높아지냐가 중요한것같음 결국.
