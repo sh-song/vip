@@ -1,5 +1,5 @@
 import cv2
-sample = cv2.imread('cv/image/sample.png')
+sample = cv2.imread('resource/sample.png')
 sample = cv2.resize(sample, dsize=(1396//2, 784//2), interpolation=cv2.INTER_AREA)
 
 sample = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
