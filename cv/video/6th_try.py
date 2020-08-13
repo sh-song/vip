@@ -70,6 +70,23 @@ def alter_display_lines(image, lines):
             return line_image
 
 
+# Slope Filter
+def slopeFilter(lines):
+    filtered_lines = []
+    not_lines = []
+
+    for line in lines:
+        for x1, y1, x2, y2 in line:
+
+            slope = (y2 - y1) / (x2 - x1)
+            #slope = (y1 - y2) / (x1 - x2)
+            if left_slope < slope < -0.5 or  0.5 < slope < right_slope -0.1 : # left -- right
+
+                filtered_lines.append(line)
+            else:
+                not_lines.append(line)
+    return filtered_lines
+                
 ###########################################################
 
 
@@ -84,7 +101,11 @@ while(cap.isOpened()):
 
     # 1. Cut in triangle shape
     tri_bot_left, tri_bot_right = 150, 1400
-    focus_x, focus_y = 670, 357
+    focus_x, focus_y = 670, 200
+    left_slope = (718 - focus_y) / (tri_bot_left - focus_x)
+    right_slope = (718 - focus_y) / (tri_bot_right - focus_x)
+
+    print('Slopes = ' + str(left_slope) + ', ' + str(right_slope))
 
 
     roi = region_of_interest(img)
@@ -99,12 +120,12 @@ while(cap.isOpened()):
         left_canny_roi = canny(left_roi)
         right_canny_roi = canny(right_roi)
 
-        print(img[634, 641, 2])
+        #print(img[634, 641, 2])
     else:
         left_canny_roi = canny_alter(left_roi)
         right_canny_roi = canny_alter(right_roi)
 
-        print('ALTER')
+        #print('ALTER')
 
 
 
@@ -119,14 +140,22 @@ while(cap.isOpened()):
     #left_lines = cv2.HoughLines(left_canny_roi, 1, np.pi/180, 50)
     #right_lines = cv2.HoughLines(right_canny_roi, 1, np.pi/180, 50)
 
+
+    ##### lopeFilter
+    filtered_left_lines = slopeFilter(left_lines)
+    filtered_right_lines = slopeFilter(right_lines)
+    filtered_left_lines_alter = slopeFilter(left_lines_alter)
+    filtered_right_lines_alter = slopeFilter(left_lines_alter)
+
+
     # 5. Display lines
     if img[634, 641, 2] < 100 : # value Red < 100
-        left_line_image = display_lines(left_roi, left_lines)
-        right_line_image = display_lines(right_roi, right_lines)
+        left_line_image = display_lines(left_roi, filtered_left_lines)
+        right_line_image = display_lines(right_roi, filtered_right_lines)
 
     else:
-        left_line_image = display_lines(left_roi, left_lines_alter)
-        right_line_image = display_lines(right_roi, right_lines_alter)
+        left_line_image = display_lines(left_roi, filtered_left_lines_alter)
+        right_line_image = display_lines(right_roi, filtered_right_lines_alter)
 
 
     #left_line_image = alter_display_lines(left_roi, left_lines)
