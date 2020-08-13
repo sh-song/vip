@@ -19,7 +19,7 @@ while(cap.isOpened()):
     ROI = region_of_interest(frame)
     gray = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 200, 300)
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, 40, 5)
+    lines = cv2.HoughLines(edges, 1, np.pi/180, 100)
     
     for i in range(len(lines)):
         for rho, theta in lines[i]:
