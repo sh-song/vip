@@ -18,9 +18,18 @@ def region_of_interest(image):
 # 3. Canny
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    blur = cv2.GaussianBlur(gray, (7, 7), 0)
     canny = cv2.Canny(blur, 20, 120) # LOW ~ HIGH
     return canny
+
+# 3-B. Canny_alter
+def canny_alter(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
+    blur = cv2.GaussianBlur(gray, (9, 9), 0)
+    canny = cv2.Canny(blur, 20, 120) # LOW ~ HIGH
+    return canny
+
+
 
 
 # 5. Display lines
@@ -85,27 +94,39 @@ while(cap.isOpened()):
     right_roi = roi[:, focus_x:, :]
 
     # 3. Canny
-    left_canny_roi = canny(left_roi)
-    right_canny_roi = canny(right_roi)
+    
+    if img[634, 641, 2] < 100 : # value Red < 100
+        left_canny_roi = canny(left_roi)
+        right_canny_roi = canny(right_roi)
+
+        print(img[634, 641, 2])
+    else:
+        left_canny_roi = canny_alter(left_roi)
+        right_canny_roi = canny_alter(right_roi)
+
+        print('ALTER')
+
+
+
 
     # 4. Detect lines by hough
-    left_lines = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 50, np.array([]), minLineLength=10, maxLineGap=10)
-    left_lines_alter = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 30, np.array([]), minLineLength=5, maxLineGap=20)
+    left_lines = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 50, np.array([]), minLineLength=20, maxLineGap=10)
+    left_lines_alter = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=50, maxLineGap=10)
 
-    right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 150, np.array([]), minLineLength=10, maxLineGap=300)
-    
+    right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 150, np.array([]), minLineLength=10, maxLineGap=150)
+    right_lines_alter = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 150, np.array([]), minLineLength=10, maxLineGap=50)
+
     #left_lines = cv2.HoughLines(left_canny_roi, 1, np.pi/180, 50)
     #right_lines = cv2.HoughLines(right_canny_roi, 1, np.pi/180, 50)
 
     # 5. Display lines
-    right_line_image = display_lines(right_roi, right_lines)
-
     if img[634, 641, 2] < 100 : # value Red < 100
         left_line_image = display_lines(left_roi, left_lines)
-        print(img[634, 641, 2])
+        right_line_image = display_lines(right_roi, right_lines)
+
     else:
         left_line_image = display_lines(left_roi, left_lines_alter)
-        print('ALTER')
+        right_line_image = display_lines(right_roi, right_lines_alter)
 
 
     #left_line_image = alter_display_lines(left_roi, left_lines)
