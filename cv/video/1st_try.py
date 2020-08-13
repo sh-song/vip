@@ -28,6 +28,7 @@ while(cap.isOpened()):
             cv2.line(vmid_frame, (x1, y1), (x2, y2), (0, 0 ,255), 2)
             result = np.vstack((top_frame, vmid_frame, bot_frame))
 
+
     cv2.imshow('result', result)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
