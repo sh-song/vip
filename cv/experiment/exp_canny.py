@@ -7,7 +7,7 @@ import numpy as np
 # 1. Cut in triangle shape
 def region_of_interest(image):
     height = image.shape[0]
-    triangle = np.array([[(tri_bot_left, height), (tri_bot_right, height), (focus_x, focus_y)]])
+    triangle = np.array([[(tri_bot_left, height), (tri_bot_right, height), (focus, 415)]])
     # vertices: bottom left, bottom right, top
     mask = np.zeros_like(image) # Generate an array filled with zeros, 
                                 # but in same shape and type as a given array
@@ -53,38 +53,36 @@ while(cap.isOpened()):
 
     # 1. Cut in triangle shape
     tri_bot_left = 195
-    tri_bot_right = 1400
-    focus_x = 700
-    focus_y = 500
+    tri_bot_right = 1300
+    focus = 600
 
     roi = region_of_interest(img)
 
     # 2. Cut in half
-    left_roi = roi[:, :focus_x, :]
-    right_roi = roi[:, focus_x:, :]
+    left_roi = roi[:, :focus, :]
+    right_roi = roi[:, focus:, :]
 
     # 3. Canny
     left_canny_roi = canny(left_roi)
     right_canny_roi = canny(right_roi)
 
     # 4. Detect lines by hough
-    left_lines = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-    right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-    #left_lines = cv2.HoughLines(left_canny_roi, 1, np.pi/180, 100)
-    #right_lines = cv2.HoughLines(right_canny_roi, 1, np.pi/180, 100)
+    #left_lines = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+    #right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
 
     # 5. Display lines
-    left_line_image = display_lines(left_roi, left_lines)
-    right_line_image = display_lines(right_roi, left_lines)
+    #left_line_image = display_lines(left_roi, left_lines)
+    #right_line_image = display_lines(right_roi, left_lines)
 
     # 6. Merge the left and the right
-    merged_line_image = np.hstack((left_line_image, right_line_image))
+    #merged_line_image = np.hstack((left_line_image, right_line_image))
 
     # 7. Integrate the background with the lines image
-    final_image = cv2.addWeighted(lane_image, 0.8, merged_line_image, 1, 1)
+    #final_image = cv2.addWeighted(lane_image, 0.8, merged_line_image, 1, 1)
 
     # 8. SHOW
-    cv2.imshow('result', final_image)
+    cv2.imshow('result1', left_canny_roi)
+    cv2.imshow('result2', right_canny_roi)
 
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
