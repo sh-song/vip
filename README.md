@@ -1,7 +1,3 @@
-# vip
-Vertically Integrated Projects
-
-
 # 안녕하세요,
 
 * 항공우주공학과 20학번 송승한입니다.
