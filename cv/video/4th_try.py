@@ -110,9 +110,6 @@ while(cap.isOpened()):
 
     cropped_image = region_of_interest(canny_image)
 
-    #left_cropped_image = cropped_image[:, :633, :]
-    #right_cropped_image = cropped_image[:, 633:, :]
-
     lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
 
     averaged_lines = average_slope_intercept(lane_image, lines)
