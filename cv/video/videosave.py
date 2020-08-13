@@ -37,6 +37,13 @@ while(cap.isOpened()):
     out.write(result)
     cv2.imshow('result', result)
 
+
+
+
+
+
+
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
