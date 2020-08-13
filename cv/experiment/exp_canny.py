@@ -68,20 +68,20 @@ while(cap.isOpened()):
 
     # 4. Detect lines by hough
     #left_lines = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-    #right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+    right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
 
     # 5. Display lines
     #left_line_image = display_lines(left_roi, left_lines)
-    #right_line_image = display_lines(right_roi, left_lines)
+    right_line_image = display_lines(right_roi, right_lines)
 
     # 6. Merge the left and the right
     #merged_line_image = np.hstack((left_line_image, right_line_image))
 
     # 7. Integrate the background with the lines image
-    #final_image = cv2.addWeighted(lane_image, 0.8, merged_line_image, 1, 1)
+    final_image = cv2.addWeighted(lane_image, 0.8, right_line_image, 1, 1)
 
     # 8. SHOW
-    cv2.imshow('result1', left_canny_roi)
+    cv2.imshow('result1', final_image)
     cv2.imshow('result2', right_canny_roi)
 
 
