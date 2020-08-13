@@ -1,9 +1,7 @@
 
 import cv2
 import numpy as np
-
 ############ Functions ###################
-
 # 1. Cut in triangle shape
 def region_of_interest(image):
     height = image.shape[0]
@@ -14,22 +12,34 @@ def region_of_interest(image):
     cv2.fillPoly(mask, triangle, (255, 255, 255)) #Fill in the mask array with triangle array
     masked_image = cv2.bitwise_and(image, mask) # Cropped image, in triangle shape
     return masked_image
-
 # 3. Canny
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (7, 7), 0)
     canny = cv2.Canny(blur, 20, 120) # LOW ~ HIGH
     return canny
-
 # 3-B. Canny_alter
 def canny_alter(image):
     gray = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
     blur = cv2.GaussianBlur(gray, (9, 9), 0)
     canny = cv2.Canny(blur, 20, 120) # LOW ~ HIGH
     return canny
+# 4-A. Slope Filter
+def slopeFilter(lines):
+    filtered_lines = []
+    not_lines = []
 
+    for line in lines:
+        for x1, y1, x2, y2 in line:
+            slope = (y2 - y1) / (x2 - x1)
+     
+     
+            if left_slope +0.1 < slope < -0.5 or  0.5 < slope < right_slope -0.1 : # left -- right
 
+                filtered_lines.append(line)
+            else:
+                not_lines.append(line)
+    return filtered_lines
 
 
 # 5. Display lines
@@ -68,45 +78,29 @@ def alter_display_lines(image, lines):
                 cv2.line(line_image, (x1, y1), (x2, y2), (0, 0 ,255), 2)
             
             return line_image
-
-
-# Slope Filter
-def slopeFilter(lines):
-    filtered_lines = []
-    not_lines = []
-
-    for line in lines:
-        for x1, y1, x2, y2 in line:
-
-            slope = (y2 - y1) / (x2 - x1)
-            #slope = (y1 - y2) / (x1 - x2)
-            if left_slope < slope < -0.5 or  0.5 < slope < right_slope -0.1 : # left -- right
-
-                filtered_lines.append(line)
-            else:
-                not_lines.append(line)
-    return filtered_lines
-                
+            
 ###########################################################
-
-
 cap = cv2.VideoCapture('resource/project_video.mp4')
 
 while(cap.isOpened()):
     ret, frame = cap.read()
-    
+
     # 0. Import image and Create lane image
     img = frame
     lane_image = np.copy(img)
+
+    # detect alter
+    alter = 0 # pave = black
+    if img[645, 464, 2] > 100:
+        alter = 1
+        print('ALTER')
+
 
     # 1. Cut in triangle shape
     tri_bot_left, tri_bot_right = 150, 1400
     focus_x, focus_y = 670, 200
     left_slope = (718 - focus_y) / (tri_bot_left - focus_x)
     right_slope = (718 - focus_y) / (tri_bot_right - focus_x)
-
-    print('Slopes = ' + str(left_slope) + ', ' + str(right_slope))
-
 
     roi = region_of_interest(img)
 
@@ -115,8 +109,7 @@ while(cap.isOpened()):
     right_roi = roi[:, focus_x:, :]
 
     # 3. Canny
-    
-    if img[634, 641, 2] < 100 : # value Red < 100
+    if alter == 0: # value Red < 100
         left_canny_roi = canny(left_roi)
         right_canny_roi = canny(right_roi)
 
@@ -127,29 +120,26 @@ while(cap.isOpened()):
 
         #print('ALTER')
 
-
-
-
     # 4. Detect lines by hough
     left_lines = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 50, np.array([]), minLineLength=20, maxLineGap=10)
     left_lines_alter = cv2.HoughLinesP(left_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=50, maxLineGap=10)
 
-    right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 150, np.array([]), minLineLength=10, maxLineGap=150)
-    right_lines_alter = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 150, np.array([]), minLineLength=10, maxLineGap=50)
+    right_lines = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 100, np.array([]), minLineLength=10, maxLineGap=200)
+    right_lines_alter = cv2.HoughLinesP(right_canny_roi, 2, np.pi/180, 150, np.array([]), minLineLength=10, maxLineGap=150)
 
     #left_lines = cv2.HoughLines(left_canny_roi, 1, np.pi/180, 50)
     #right_lines = cv2.HoughLines(right_canny_roi, 1, np.pi/180, 50)
 
 
-    ##### lopeFilter
+    # 4-A slopeFilter
     filtered_left_lines = slopeFilter(left_lines)
     filtered_right_lines = slopeFilter(right_lines)
     filtered_left_lines_alter = slopeFilter(left_lines_alter)
-    filtered_right_lines_alter = slopeFilter(left_lines_alter)
+    filtered_right_lines_alter = slopeFilter(right_lines_alter)
 
 
     # 5. Display lines
-    if img[634, 641, 2] < 100 : # value Red < 100
+    if alter == 0 : # value Red < 100
         left_line_image = display_lines(left_roi, filtered_left_lines)
         right_line_image = display_lines(right_roi, filtered_right_lines)
 
