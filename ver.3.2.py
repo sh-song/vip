@@ -65,7 +65,7 @@ def display_lines(image, lines):
 ###########################################################
 ###########################################################
 
-cap = cv2.VideoCapture('out_final.avi')
+cap = cv2.VideoCapture('resource/project_video.mp4')
 
 while(cap.isOpened()):
     ret, frame = cap.read()
